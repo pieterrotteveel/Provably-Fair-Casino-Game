@@ -1,4 +1,4 @@
-# 🗼 Towers - Provably Fair Casino Game
+# Towers - Provably Fair Casino Game
 
 A **Tower Climb** style provably fair casino mini-game built with Ruby on Rails 8 and a vanilla JavaScript frontend.
 
@@ -9,7 +9,7 @@ A **Tower Climb** style provably fair casino mini-game built with Ruby on Rails 
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 > **IMPORTANT: This project is for educational and demonstration purposes only.**
 >
@@ -21,7 +21,7 @@ A **Tower Climb** style provably fair casino mini-game built with Ruby on Rails 
 
 ---
 
-## 🎮 Game Overview
+## Game Overview
 
 **Towers** is a risk-reward climbing game where players:
 
@@ -37,11 +37,10 @@ A **Tower Climb** style provably fair casino mini-game built with Ruby on Rails 
 |------------|---------------|----------------|---------------------|
 | Easy       | 4             | 1.3×           | ~10.6× bet          |
 | Medium     | 3             | 1.5×           | ~38.4× bet          |
-| Hard       | 3             | 1.5×           | ~38.4× bet          |
 
 ---
 
-## 🔐 Provably Fair System
+## Provably Fair System
 
 This game implements a cryptographic provably fair system:
 
@@ -62,7 +61,7 @@ You can verify any game result by:
 
 ---
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### Stack
 
@@ -99,7 +98,7 @@ You can verify any game result by:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -146,7 +145,7 @@ SECRET_KEY_BASE=your_secret_key_base
 
 ---
 
-## 🧪 Testing the API
+## Testing the API
 
 ### Create a new game
 ```bash
@@ -171,7 +170,7 @@ curl -X POST http://localhost:3000/api/v1/towers/cashout \
 
 ---
 
-## 📁 Database Schema
+## Database Schema
 
 ### game_rounds
 | Column | Type | Description |
@@ -193,7 +192,7 @@ curl -X POST http://localhost:3000/api/v1/towers/cashout \
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -205,13 +204,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by tower/mine games on various crypto casino platforms
 - Built as a demonstration of provably fair gaming concepts
