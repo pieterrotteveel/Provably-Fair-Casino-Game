@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Towers - High Stakes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f1923;
+            --bg-panel: #1c2530;
+            --bg-hover: #25303e;
+            --accent-green: #00e701;
+            --accent-red: #ff4655;
+            --text-main: #ece8e1;
+            --text-dim: #8b9bb4;
+            --tile-base: #2f3e4e;
+            --tile-hover: #3f5060;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Navbar */
+        .navbar {
+            height: 70px;
+            background: var(--bg-panel);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+        
+        .logo span { color: var(--accent-green); }
+
+        .game-info-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .meta-label { font-size: 0.7rem; opacity: 0.7; }
+        .meta-value { font-weight: 600; color: #fff; }
+
+        .balance-container {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .balance-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px auto 10px auto;
+            gap: 40px;
+            padding: 0 20px;
+            height: calc(100vh - 160px);
+            min-height: 600px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+            position: relative;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-wrapper {
+            background: var(--bg-dark);
+            border: 2px solid var(--bg-dark);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-green);
+        }
+
+        .input-field {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .difficulty-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: var(--bg-dark);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .diff-option {
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            transition: 0.2s;
+        }
+
+        .diff-option.active {
+            background: var(--bg-panel);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .info-panel {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .info-row:last-child { margin-bottom: 0; }
+        .info-val { color: #fff; font-weight: 600; }
+
+        .action-btn {
+            margin-top: auto;
+            border: none;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.2s;
+            text-transform: uppercase;
+            width: 100%;
+        }
+
+        .btn-play {
+            background: var(--accent-green);
+            color: #000;
+        }
+        
+        .btn-cashout {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .action-btn:hover { filter: brightness(1.1); }
+        .action-btn:active { transform: scale(0.98); }
+        .action-btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+            filter: grayscale(0.8);
+        }
+
+        /* Game Area */
+        .game-area {
+            flex: 1;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tower-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column-reverse; /* Row 0 at bottom */
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tower-row {
+            display: flex;
+            gap: 12px;
+            height: 55px;
+            position: relative;
+        }
+
+        .row-multiplier {
+            position: absolute;
+            right: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.9rem;
+            width: 60px;
+            text-align: left;
+            transition: 0.3s;
+        }
+        
+        .tower-row.active .row-multiplier {
+            color: #fff;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .tile {
+            flex: 1;
+            background: var(--tile-base);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .tile::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        /* Tile States */
+        /* Active Row */
+        .tower-row.active .tile:hover {
+            background: var(--tile-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .tower-row.active .tile:hover::after {
+            opacity: 1;
+        }
+
+        /* Locked Rows */
+        .tower-row.locked .tile {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+         /* Past Rows (Completed) */
+        .tower-row.completed .tile {
+            opacity: 0.6;
+            cursor: default;
+        }
+        .tower-row.completed .tile.safe {
+            opacity: 1;
+        }
+
+        /* Revealed States */
+        .tile.safe {
+            background: var(--bg-dark);
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 231, 1, 0.2);
+        }
+        
+        .tile.safe::before {
+            content: '💎';
+            font-size: 1.5rem;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .tile.mine {
+            background: var(--bg-dark);
+            border: 2px solid var(--accent-red);
+            box-shadow: 0 0 20px rgba(255, 70, 85, 0.4);
+        }
+        
+        .tile.mine::before {
+            content: '💣';
+            font-size: 1.5rem;
+            animation: shake 0.4s;
+        }
+
+        .tile.mine-revealed {
+            background: rgba(255, 70, 85, 0.2);
+            opacity: 0.5;
+        }
+        .tile.mine-revealed::before {
+            content: '💣';
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Overlay Messages */
+        .game-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 25, 35, 0.95);
+            padding: 30px 50px;
+            border-radius: 16px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            display: none;
+            animation: popIn 0.3s;
+        }
+        
+        .game-status.visible { display: block; }
+
+        .status-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .status-win { color: var(--accent-green); }
+        .status-lose { color: var(--accent-red); }
+        
+        .status-amount {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        /* Footer */
+        .legal-footer {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .legal-links span {
+            margin-right: 15px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">TOWERS<span>.GAME</span></div>
+            <div class="game-info-meta">
+                <div class="meta-item">
+                    <span class="meta-label">TIME</span>
+                    <span class="meta-value" id="clock">00:00</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">SESSION</span>
+                    <span class="meta-value" id="sessionTimer">00:00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="balance-container">
+            <span class="balance-label">Balance</span>
+            <span class="balance-value" id="balanceDisplay">1000.00</span>
+            <span class="balance-label" style="font-size:0.7rem; margin-left:-5px;">COINS</span>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div class="control-group">
+                <label class="label">
+                    <span>Bet Amount</span>
+                    <span style="font-size:0.7rem; opacity:0.5;">MIN 1.00</span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="betInput" class="input-field" value="10" min="1">
+                    <span style="color:var(--text-dim); font-weight:600;">COINS</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="label">Difficulty</label>
+                <div class="difficulty-select">
+                    <div class="diff-option active" onclick="setDifficulty('medium')" id="diffMedium">Medium</div>
+                    <div class="diff-option" onclick="setDifficulty('easy')" id="diffEasy">Easy</div>
+                </div>
+                <!-- Hidden select for logic compatibility -->
+                <select id="difficultySelect" style="display:none">
+                    <option value="easy">Easy (4 columns)</option>
+                    <option value="medium" selected>Medium (3 columns)</option>
+                </select>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-row">
+                    <span>RTP (Theoretical)</span>
+                    <span class="info-val">97.0%</span>
+                </div>
+                <div class="info-row">
+                    <span>Active Paylines</span>
+                    <span class="info-val" id="activePaylines">Active Row</span>
+                </div>
+                <div class="info-row">
+                    <span>Max Payout</span>
+                    <span class="info-val" id="maxPayout">38.44x</span>
+                </div>
+            </div>
+
+            <div style="flex: 1;"></div> <!-- Spacer -->
+
+            <button id="mainBtn" class="action-btn btn-play" onclick="handleMainAction()">
+                BET
+            </button>
+        </aside>
+
+        <!-- Game Board -->
+        <main class="game-area">
+            <div id="gameStatus" class="game-status">
+                <div id="statusTitle" class="status-title"></div>
+                <div id="statusMessage" class="status-amount"></div>
+            </div>
+
+            <div class="tower-container" id="towerContainer">
+                <!-- Rows generated by JS -->
+            </div>
+        </main>
+    </div>
+
+    <footer class="legal-footer">
+        <div class="legal-text">
+            WARNING: Malfunction voids all pays. Play Responsibly. <br>
+            © 2026 Provably Fair Games Inc. All Rights Reserved.
+        </div>
+        <div class="legal-links">
+            <span>Version: v1.0.2</span>
+            <span>ID: <span id="sessId">--</span></span>
+        </div>
+    </footer>
+
+    <script>
+        // --- Game State ---
+        const API_URL = 'http://localhost:3000/api/v1/towers';
+        let gameState = {
+            id: null,
+            active: false,
+            difficulty: 'medium',
+            currentRow: 0,
+            balance: 1000,
+            multiplier: 1.0,
+            startTime: Date.now()
+        };
+
+        const multipliers = {
+            medium: [1.50, 2.25, 3.38, 5.06, 7.59, 11.39, 17.09, 25.63, 38.44],
+            easy: [1.30, 1.69, 2.20, 2.86, 3.71, 4.83, 6.27, 8.16, 10.60]
+        };
+
+        // --- Init ---
+        function init() {
+            renderTower();
+            startClocks();
+            document.getElementById('sessId').textContent = Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        // --- Time Functions ---
+        function startClocks() {
+            // Update Clock every second
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }, 1000);
+
+            // Update Session Timer every second
+            setInterval(() => {
+                const elapsedDiff = Date.now() - gameState.startTime;
+                const seconds = Math.floor(elapsedDiff / 1000) % 60;
+                const minutes = Math.floor(elapsedDiff / (1000 * 60)) % 60;
+                const hours = Math.floor(elapsedDiff / (1000 * 60 * 60));
+                
+                const fmt = (n) => n.toString().padStart(2, '0');
+                document.getElementById('sessionTimer').textContent = `${fmt(hours)}:${fmt(minutes)}:${fmt(seconds)}`;
+            }, 1000);
+        }
+
+        // --- UI Handling ---
+        function setDifficulty(diff) {
+            if (gameState.active) return;
+            
+            gameState.difficulty = diff;
+            document.getElementById('difficultySelect').value = diff;
+            
+            document.querySelectorAll('.diff-option').forEach(el => el.classList.remove('active'));
+            document.getElementById(diff === 'medium' ? 'diffMedium' : 'diffEasy').classList.add('active');
+            
+            // Update Max Payout Display
+            const maxMult = diff === 'medium' ? '38.44x' : '10.60x';
+            document.getElementById('maxPayout').textContent = maxMult;
+
+            renderTower();
+        }
+
+        function updateBalance(newBal) {
+            gameState.balance = parseFloat(newBal);
+            document.getElementById('balanceDisplay').textContent = gameState.balance.toFixed(2);
+        }
+
+        function toggleControls(active) {
+            const btn = document.getElementById('mainBtn');
+            const betInput = document.getElementById('betInput');
+
+            if (active) {
+                // Game Running State
+                btn.className = "action-btn btn-cashout";
+                // Inner HTML set by updateCashoutButton
+                betInput.disabled = true;
+            } else {
+                // Game Idle State
+                btn.className = "action-btn btn-play";
+                btn.textContent = "BET";
+                betInput.disabled = false;
+            }
+        }
+        
+        function handleMainAction() {
+            if (gameState.active) {
+                cashOut();
+            } else {
+                startGame();
+            }
+        }
+
+        function updateCashoutButton(multiplier, isStart = false) {
+             const bet = parseFloat(document.getElementById('betInput').value);
+             // If just starting, multiplier might be 1.0 (no profit yet) so we can just show CASHOUT
+             
+             let winAmount = (bet * multiplier).toFixed(2);
+             if (isStart) winAmount = bet.toFixed(2); 
+
+             const btn = document.getElementById('mainBtn');
+             // If we haven't climbed, maybe just "CASHOUT" text
+             btn.innerHTML = `CASHOUT <br><span style="font-size:0.8em">${winAmount} COINS</span>`;
+        }
+
+        // --- Core Game Logic ---
+
+        async function startGame() {
+            const betAmount = document.getElementById('betInput').value;
+            document.getElementById('gameStatus').classList.remove('visible');
+            
+            try {
+                const res = await fetch(`${API_URL}/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        bet_amount: betAmount, 
+                        difficulty: gameState.difficulty 
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Update State
+                gameState.id = data.game_id;
+                gameState.active = true;
+                gameState.currentRow = 0;
+                updateBalance(data.available_balance);
+
+                // Update UI
+                toggleControls(true);
+                updateCashoutButton(1.0, true);
+                renderTower(); // Re-render for active game
+                
+            } catch (e) {
+                console.error(e);
+                alert("Connection failed");
+            }
+        }
+
+        async function playTile(row, col) {
+            if (!gameState.active || row !== gameState.currentRow) return;
+
+            try {
+                const res = await fetch(`${API_URL}/play`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        game_id: gameState.id, 
+                        tile_index: col 
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.status === 'game_over') {
+                    handleGameOver(data, col);
+                } else if (data.status === 'success') {
+                    handleSuccess(data, row, col);
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function cashOut() {
+            if (!gameState.active) return;
+
+            try {
+                const res = await fetch(`${API_URL}/cashout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ game_id: gameState.id })
+                });
+
+                const data = await res.json();
+                
+                if (data.balance) {
+                    updateBalance(data.balance);
+                    endGame('win', data.payout);
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // --- Rendering & Events ---
+
+        function handleSuccess(data, row, col) {
+            // Update the tile
+            const tile = getTileElement(row, col);
+            tile.classList.add('safe');
+            
+            // Move up
+            gameState.currentRow++;
+            
+            // Check win condition
+            if (gameState.currentRow >= 9) {
+                // Wait small delay then show win
+                setTimeout(() => {
+                    endGame('win', (parseFloat(document.getElementById('betInput').value) * data.multiplier).toFixed(2));
+                }, 500);
+            } else {
+                updateCashoutButton(data.multiplier);
+                updateTowerClasses();
+            }
+        }
+
+        function handleGameOver(data, clickedCol) {
+            // Reveal Mine
+            const tile = getTileElement(gameState.currentRow, clickedCol);
+            tile.classList.add('mine');
+            
+            // Reveal other mines
+            revealMines(data.full_path);
+            
+            endGame('lose', 0);
+        }
+
+        function revealMines(path) {
+            path.forEach((mineCol, rowIdx) => {
+                if (rowIdx === gameState.currentRow) return; 
+                const tile = getTileElement(rowIdx, mineCol);
+                if (tile) tile.classList.add('mine-revealed');
+            });
+        }
+
+        function endGame(result, amount) {
+            gameState.active = false;
+            toggleControls(false); // Reset to BET
+            
+            const statusBox = document.getElementById('gameStatus');
+            const title = document.getElementById('statusTitle');
+            const msg = document.getElementById('statusMessage');
+
+            statusBox.classList.add('visible');
+            
+            if (result === 'win') {
+                title.textContent = "YOU WON!";
+                title.className = "status-title status-win";
+                msg.textContent = `+${amount} COINS`;
+                msg.style.display = 'block';
+            } else {
+                title.textContent = "BUSTED";
+                title.className = "status-title status-lose";
+                msg.style.display = 'none';
+            }
+            
+            const btn = document.getElementById('mainBtn');
+            btn.innerHTML = "BET AGAIN";
+        }
+
+        function renderTower() {
+            const container = document.getElementById('towerContainer');
+            container.innerHTML = '';
+            
+            const cols = gameState.difficulty === 'easy' ? 4 : 3;
+            const mults = multipliers[gameState.difficulty];
+
+            for (let r = 0; r < 9; r++) {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'tower-row';
+                if (r === gameState.currentRow && gameState.active) rowEl.classList.add('active');
+                if (r < gameState.currentRow) rowEl.classList.add('completed');
+                if (r > gameState.currentRow) rowEl.classList.add('locked');
+                
+                // Multiplier Label
+                const multLabel = document.createElement('div');
+                multLabel.className = 'row-multiplier';
+                multLabel.textContent = mults[r].toFixed(2) + 'x';
+                rowEl.appendChild(multLabel);
+
+                // Tiles
+                for (let c = 0; c < cols; c++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    tile.onclick = () => playTile(r, c);
+                    rowEl.appendChild(tile);
+                }
+                
+                container.appendChild(rowEl);
+            }
+        }
+
+        function updateTowerClasses() {
+            const rows = document.getElementById('towerContainer').children;
+            
+            for (let r = 0; r < 9; r++) {
+                const row = rows[r];
+                row.classList.remove('active', 'locked', 'completed');
+                
+                if (r === gameState.currentRow && gameState.active) row.classList.add('active');
+                else if (r < gameState.currentRow) row.classList.add('completed');
+                else {
+                    row.classList.add('locked');
+                }
+            }
+        }
+
+        function getTileElement(r, c) {
+             const rows = document.getElementById('towerContainer').children;
+             const targetRow = rows[r];
+             return targetRow.children[c + 1]; 
+        }
+
+        init();
+
+    </script>
+</body>
+</html>
