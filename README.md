@@ -27,7 +27,7 @@ A **Tower Climb** style provably fair casino mini-game built with Ruby on Rails 
 
 1. Place a bet and choose a difficulty level
 2. Attempt to climb a 9-row tower
-3. Each row has multiple tiles — one contains a hidden mine 💣
+3. Each row has multiple tiles - one contains a hidden mine
 4. Successfully avoiding the mine increases your multiplier
 5. Hit a mine and lose your bet, or cash out anytime to secure winnings
 
