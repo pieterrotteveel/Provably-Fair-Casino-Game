@@ -30,7 +30,7 @@ Click the **+** icon or split terminal, then run:
 
 ---
 
-## 📋 Manual Testing
+## Manual Testing
 
 **In Terminal 2 (while server runs in Terminal 1):**
 
